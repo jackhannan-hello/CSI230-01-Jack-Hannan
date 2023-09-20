@@ -5,8 +5,7 @@ read prefix
 #ip=$(bash ipWithPrefix.bash)
 #prefix=$(bash prefixLength.bash)
 ipList=""
-
-D2B=({0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1})
+printf "" > ipCounter.txt
 
 ipPart1=$(echo "$ip" | cut -d "." -f1)
 ipPart2=$(echo "$ip" | cut -d "." -f2)
@@ -21,7 +20,6 @@ then
    for i in {1..254}
    do
      hostIP=$(echo "obase=2;$i" | bc)
-     printf "IP Adress ${i}" >> ipCounter.txt
      printf '%08d' "${ipPart1Binary}" >> ipCounter.txt
      printf '%08d' "${ipPart2Binary}" >> ipCounter.txt
      printf '%08d' "${ipPart3Binary}" >> ipCounter.txt
@@ -34,10 +32,8 @@ else
    do
      for j in {1..254}
      do
-       #numIPAddrs=$(echo $i + $j")
        hostIP1=$(echo "obase=2;$i" | bc)
        hostIP2=$(echo "obase=2;$j" | bc)
-       printf "IP Adress ${i}" >> ipCounter.txt
        printf '%08d' "${ipPart1Binary}" >> ipCounter.txt
        printf '%08d' "${ipPart2Binary}" >> ipCounter.txt
        printf '%08d' "${hostIP1}" >> ipCounter.txt
