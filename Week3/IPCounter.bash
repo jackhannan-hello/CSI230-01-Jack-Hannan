@@ -12,33 +12,36 @@ ipPart1=$(echo "$ip" | cut -d "." -f1)
 ipPart2=$(echo "$ip" | cut -d "." -f2)
 ipPart3=$(echo "$ip" | cut -d "." -f3)
 
-ipPart1Binary=$(echo "${D2B[$ipPart1]}")
-ipPart2Binary=$(echo "${D2B[$ipPart2]}")
-ipPart3Binary=$(echo "${D2B[$ipPart3]}")
+ipPart1Binary=$(echo "obase=2;$ipPart1" | bc)
+ipPart2Binary=$(echo "obase=2;$ipPart2" | bc)
+ipPart3Binary=$(echo "obase=2;$ipPart3" | bc)
 
 if [ "${prefix}" -eq 24 ];
 then
-   networkIP=$(echo "$ipPart1Binary""$ipPart2Binary""$ipPart1Binary")
    for i in {1..254}
    do
-     hostIP=$(echo "${D2B[$i]}")
-     tempIPAddr=$(echo "$networkIP""$hostIP")
-     ipList+=$(echo "$IP Address ${i}: ${tempIPAddr} |")
+     hostIP=$(echo "obase=2;$i" | bc)
+     printf "IP Adress ${i}" >> ipCounter.txt
+     printf '%08d' "${ipPart1Binary}" >> ipCounter.txt
+     printf '%08d' "${ipPart2Binary}" >> ipCounter.txt
+     printf '%08d' "${ipPart3Binary}" >> ipCounter.txt
+     printf '%08d\n' "${hostIP}" >> ipCounter.txt
    done
 else
    networkIP=$(echo "$ipPart1Binary""$ipPart2Binary")
    numIPAddrs=0
    for i in {1..254}
    do
-     hostIP1=$(echo "${D2B[$i]}" )
      for j in {1..254}
      do
        #numIPAddrs=$(echo $i + $j")
-       hostIP2=$(echo "${D2B[$j]}" )
-       tempIPAddr=$(echo "$networkIP""$hostIP1""$hostIP2")
-       ipList+="$IP Address : ${tempIPAddr} |"
+       hostIP1=$(echo "obase=2;$i" | bc)
+       hostIP2=$(echo "obase=2;$j" | bc)
+       printf "IP Adress ${i}" >> ipCounter.txt
+       printf '%08d' "${ipPart1Binary}" >> ipCounter.txt
+       printf '%08d' "${ipPart2Binary}" >> ipCounter.txt
+       printf '%08d' "${hostIP1}" >> ipCounter.txt
+       printf '%08d\n' "${hostIP2}" >> ipCounter.txt
      done
    done
 fi
-
-echo "${ipList}" > ipCounter.txt
