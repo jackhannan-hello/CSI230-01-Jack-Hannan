@@ -1,0 +1,12 @@
+#!/bin/bash
+input="possibleips.txt"
+printf "" > activehosts.txt
+
+while read -r line
+do
+  #checkIP=$(ping -c 1 $line")
+  if [ ping -c 1 "$checkIP" > /dev/null ];
+  then
+     printf "${line}\n" >> activehosts.txt
+  fi
+done < "$input"
