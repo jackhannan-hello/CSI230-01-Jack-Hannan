@@ -26,15 +26,14 @@ function badClients()
 {
 lastTenMins=$((${currentMinute}/10))
 badVisitor=$(cat "$ipList" | cat "${input}" | egrep 'HTTP/.*" 40[0-4]' | egrep '${currentDate}:${currentHour}:${lastTenMins}[0-9]' | cut -d " " -f1)
-
 echo "$badVisitor" | sort | uniq -c
+uniqueBadVisitor=("$badVisitor" | sort | uniq -c)
+echo "${uniqueBadVisitor}" | egrep -v '^[0-2] | cut --complement -d -f1-7 >> blacklisted.txt
 }
 
 function histogram()
 {
-goodVisitor=$(cat "$ipList" | cat "${input}" | cut -d " " -f4-7)
-
-echo "$goodVisitor" | sort | uniq -c
+cat "${input}" | egrep 'HTTP/.* 200' | cut -d ":" -f1 | cut --complement -d "[" -f1 | uniq -c | awk '{print $1 " visits on " $2}'
 }
 
 function block()
@@ -54,13 +53,13 @@ iptables -F
 echo "Enter choice"
 read userInput
 
-if [ "${userInput}" -eq 0 ];
+if [ "${userInput}" -eq 1 ];
 then
     listIPs
-elif [ "${userInput}" -eq 1 ];
+elif [ "${userInput}" -eq 2 ];
 then
     visitors
-elif [ "${userInput}" -eq 2 ];
+elif ["${userInput}" -eq 3 ];
 then
     badClients
 fi
