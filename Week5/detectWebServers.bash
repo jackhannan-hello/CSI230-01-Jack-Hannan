@@ -4,7 +4,7 @@ printf "" > webservers.txt
 
 while read -r line
 do
- response=$(curl --head "${line}"/helloworld.html | grep "200")
+ response=$(curl --head -s  "${line}"/helloworld.html | grep "200")
  if [ "${#response}" -ge 1 ]
  then
      echo "$line" >> webservers.txt

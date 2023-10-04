@@ -1,4 +1,4 @@
-input="/var/log/apache2/access.log"
+input="/var/log/apache2/access.log.1"
 ipList="clientIPs.txt"
 badIPList="blacklisted.txt"
 currentDate=$(date +"%d/%b/%Y")
@@ -27,7 +27,7 @@ function badClients()
 lastTenMins=$((${currentMinute}/10))
 badVisitor=$(cat "$ipList" | cat "${input}" | egrep 'HTTP/.*" 40[0-4]' | egrep '${currentDate}:${currentHour}:${lastTenMins}[0-9]' | cut -d " " -f1)
 echo "$badVisitor" | sort | uniq -c
-uniqueBadVisitor=("$badVisitor" | sort | uniq -c)
+uniqueBadVisitor=$("$badVisitor" | sort | uniq -c)
 echo "${uniqueBadVisitor}" | egrep -v '^[0-2] | cut --complement -d -f1-7 >> blacklisted.txt
 }
 
@@ -50,16 +50,33 @@ function resetblocks()
 iptables -F
 }
 
+echo "[1] Number of Visitors"
+echo "[2] Display Visitors"
+echo "[3] Show Bad Visits"
+echo "[4] Block Bad Visits"
+echo "[5] Reset Block Rules"
+echo "[6] Show Visit Histogram"
+echo "[7] Quit"
 echo "Enter choice"
 read userInput
-
-if [ "${userInput}" -eq 1 ];
+while "${userInput}" -ne 7
+do
+if [ "${userInput}" -le 0 || -ge 8 ];
 then
-    listIPs
+   echo "Enter Valid Entry 1-7"
+   read userInput
+elif [ "${userInput}" -eq 1 ];
+then listIPs
 elif [ "${userInput}" -eq 2 ];
-then
-    visitors
-elif ["${userInput}" -eq 3 ];
-then
-    badClients
+then visitors
+elif [ "${userInput}" -eq 3 ];
+then badClients
+elif [ "${userInput}" -eq 4 ];
+then block
+elif [ "{userInput}" -eq 5 ];
+then resetblocks
+else;
+then histogram
 fi
+
+done
