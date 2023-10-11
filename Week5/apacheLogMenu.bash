@@ -1,4 +1,4 @@
-input="/var/log/apache2/access.log.1"
+input="/var/log/apache2/access.log"
 ipList="clientIPs.txt"
 badIPList="blacklisted.txt"
 currentDate=$(date +"%d/%b/%Y")
@@ -9,7 +9,6 @@ currentMinute=$(date +"%M")
 function listIPs()
 {
 printf "" > clientIPs.txt
-ipList=""
 temp=$(cat "$input" | cut -d " " -f1)
 echo "${temp}" | sort | uniq | sort >> clientIPs.txt
 }
@@ -17,23 +16,26 @@ echo "${temp}" | sort | uniq | sort >> clientIPs.txt
 #Count total unique IPS
 function visitors()
 {
-goodVisitor=$(cat "$ipList" | cat "${input}" | grep "${currentDate}" | cut -d " " -f1)
+goodVisitor=$(cat "clientIPs.txt" | cat "${input}" | grep "${currentDate}" | cut -d " " -f1)
 
 echo "$goodVisitor" | sort | uniq -c
 }
 
 function badClients()
 {
-lastTenMins=$((${currentMinute}/10))
-badVisitor=$(cat "$ipList" | cat "${input}" | egrep 'HTTP/.*" 40[0-4]' | egrep '${currentDate}:${currentHour}:${lastTenMins}[0-9]' | cut -d " " -f1)
-echo "$badVisitor" | sort | uniq -c
-uniqueBadVisitor=$("$badVisitor" | sort | uniq -c)
-echo "${uniqueBadVisitor}" | egrep -v '^[0-2] | cut --complement -d -f1-7 >> blacklisted.txt
+printf "" > blacklisted.txt
+#lastTenMins=$((${currentMinute}/10))
+badVisitor=$(cat "clientIPs.txt" | cat "${input}" | egrep 'HTTP/.*" 40[0-4]' | cut -d " " -f1) #| egrep '${currentDate}:${currentHour}:[0-59]' | cut -d " " -f1)
+visitorCount=$(echo "${badVisitor}" | sort | uniq -c | cut -d " " -f6)
+if [ "${visitorCount}" -gt 3 ];
+then
+echo "${badVisitor}" | sort | uniq -c | cut -d " " -f7 >> blacklisted.txt
+fi
 }
 
 function histogram()
 {
-cat "${input}" | egrep 'HTTP/.* 200' | cut -d ":" -f1 | cut --complement -d "[" -f1 | uniq -c | awk '{print $1 " visits on " $2}'
+cat "${input}" | egrep 'HTTP/.* 200' | cut -d ":" -f1 | cut --complement -d "[" -f1 | uniq -c  | awk '{print $1 " visits on " $2}'
 }
 
 function block()
@@ -59,24 +61,32 @@ echo "[6] Show Visit Histogram"
 echo "[7] Quit"
 echo "Enter choice"
 read userInput
-while "${userInput}" -ne 7
+while [ "${userInput}" -ne 7 ]
 do
-if [ "${userInput}" -le 0 || -ge 8 ];
+if [[ "${userInput}" -eq 1 ]];
 then
-   echo "Enter Valid Entry 1-7"
-   read userInput
-elif [ "${userInput}" -eq 1 ];
-then listIPs
-elif [ "${userInput}" -eq 2 ];
-then visitors
-elif [ "${userInput}" -eq 3 ];
-then badClients
-elif [ "${userInput}" -eq 4 ];
-then block
-elif [ "{userInput}" -eq 5 ];
-then resetblocks
-else;
-then histogram
+ listIPs
+ echo $(wc -l "clientIPs.txt" | cut -d " " -f1)
+elif [[ "${userInput}" -eq 2 ]];
+then
+ visitors
+elif [[ "${userInput}" -eq 3 ]];
+then
+ badClients
+elif [[ "${userInput}" -eq 4 ]];
+then
+ block
+elif [[ "${userInput}" -eq 5 ]];
+then
+ resetblocks
+elif [[ "${userInput}" -eq 6 ]];
+then
+ histogram
+else
+echo "Enter Valid Entry 1-7"
 fi
+
+echo "Enter choice"
+read userInput
 
 done
