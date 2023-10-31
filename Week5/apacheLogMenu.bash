@@ -25,12 +25,13 @@ function badClients()
 {
 printf "" > blacklisted.txt
 #lastTenMins=$((${currentMinute}/10))
-badVisitor=$(cat "clientIPs.txt" | cat "${input}" | egrep 'HTTP/.*" 40[0-4]' | cut -d " " -f1) #| egrep '${currentDate}:${currentHour}:[0-59]' | cut -d " " -f1)
+badVisitor=$(cat "clientIPs.txt" | cat "${input}" | egrep 'HTTP/.*" 40[0-4]' | egrep "${currentDate}:${currentHour}:[0-59]" | cut -d " " -f1)
 visitorCount=$(echo "${badVisitor}" | sort | uniq -c | cut -d " " -f6)
 if [ "${visitorCount}" -gt 3 ];
 then
 echo "${badVisitor}" | sort | uniq -c | cut -d " " -f7 >> blacklisted.txt
 fi
+echo $(cat "$badIPList")
 }
 
 function histogram()
@@ -40,16 +41,17 @@ cat "${input}" | egrep 'HTTP/.* 200' | cut -d ":" -f1 | cut --complement -d "[" 
 
 function block()
 {
-blockedIPs=$(cat "$badIPList")
-for ipAddr in "$blockedIPs";
+while read -r line
 do
-  iptables -A INPUT -s "$ipAddr" -j Drop
-done
+iptables -A INPUT -s "$line" -j DROP
+done < "blacklisted.txt"
+iptables -L INPUT -v -n
 }
 
 function resetblocks()
 {
 iptables -F
+iptables -L INPUT -v -n
 }
 
 echo "[1] Number of Visitors"
@@ -63,6 +65,11 @@ echo "Enter choice"
 read userInput
 while [ "${userInput}" -ne 7 ]
 do
+while [[ "${userInput}" -le 0 || "${userInput}" -ge 7 ]]
+    do
+	echo "Enter a valid input 1-6"
+	read userInput
+    done
 if [[ "${userInput}" -eq 1 ]];
 then
  listIPs
@@ -82,8 +89,6 @@ then
 elif [[ "${userInput}" -eq 6 ]];
 then
  histogram
-else
-echo "Enter Valid Entry 1-7"
 fi
 
 echo "Enter choice"
