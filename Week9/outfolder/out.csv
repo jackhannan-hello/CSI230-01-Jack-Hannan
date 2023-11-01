@@ -14,3 +14,17 @@ PrivateBuild:     False
 SpecialBuild:     False
 Language:         
 ","powershell_basic_lab1","System.Collections.Generic.List`1[System.String]",,"powershell_basic_lab1.ps1","1372","C:\Users\champuser\CSI230-01JHannan\Week9","C:\Users\champuser\CSI230-01JHannan\Week9","False","True","C:\Users\champuser\CSI230-01JHannan\Week9\powershell_basic_lab1.ps1",".ps1","10/25/2023 12:45:38 PM","10/25/2023 4:45:38 PM","10/25/2023 2:55:13 PM","10/25/2023 6:55:13 PM","10/25/2023 2:55:13 PM","10/25/2023 6:55:13 PM","Archive"
+"Microsoft.PowerShell.Core\FileSystem::C:\Users\champuser\CSI230-01JHannan\Week9\process_management1.ps1","Microsoft.PowerShell.Core\FileSystem::C:\Users\champuser\CSI230-01JHannan\Week9","process_management1.ps1","C","Microsoft.PowerShell.Core\FileSystem","False","-a----","File:             C:\Users\champuser\CSI230-01JHannan\Week9\process_management1.ps1
+InternalName:     
+OriginalFilename: 
+FileVersion:      
+FileDescription:  
+Product:          
+ProductVersion:   
+Debug:            False
+Patched:          False
+PreRelease:       False
+PrivateBuild:     False
+SpecialBuild:     False
+Language:         
+","process_management1","System.Collections.Generic.List`1[System.String]",,"process_management1.ps1","785","C:\Users\champuser\CSI230-01JHannan\Week9","C:\Users\champuser\CSI230-01JHannan\Week9","False","True","C:\Users\champuser\CSI230-01JHannan\Week9\process_management1.ps1",".ps1","10/31/2023 7:32:33 PM","10/31/2023 11:32:33 PM","11/1/2023 1:43:00 PM","11/1/2023 5:43:00 PM","11/1/2023 1:43:00 PM","11/1/2023 5:43:00 PM","Archive"
